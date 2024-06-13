@@ -1,26 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePushNotificationDto } from './dto/create-push-notification.dto';
-import { UpdatePushNotificationDto } from './dto/update-push-notification.dto';
+import { EventPattern } from '@nestjs/microservices';
 
 @Injectable()
 export class PushNotificationsService {
-  create(createPushNotificationDto: CreatePushNotificationDto) {
-    return 'This action adds a new pushNotification';
-  }
-
-  findAll() {
-    return `This action returns all pushNotifications`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} pushNotification`;
-  }
-
-  update(id: number, updatePushNotificationDto: UpdatePushNotificationDto) {
-    return `This action updates a #${id} pushNotification`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} pushNotification`;
+  @EventPattern('user_created')
+  handleUserCreated(data: Record<string, unknown>): void {
+    console.log('Received user_created event:', data);
+    // Save in db notifications
   }
 }
