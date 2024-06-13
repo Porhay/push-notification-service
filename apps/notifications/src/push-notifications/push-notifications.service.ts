@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy, EventPattern } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
 import { PushNotification } from './entities/push-notification.entity';
@@ -15,6 +15,7 @@ export class PushNotificationsService {
     @InjectRepository(PushNotification)
     private notificationsRepository: Repository<PushNotification>,
     private readonly configService: ConfigService,
+    @Inject('RMQ_SERVICE') private readonly rmqService: ClientProxy,
   ) {}
 
   @EventPattern('user_created')
@@ -33,8 +34,12 @@ export class PushNotificationsService {
         scheduledTime: now,
       });
       await this.notificationsRepository.save(newNotification);
-
       this.logger.log(`Saved new notification, id: ${newNotification.id}`);
+
+      // emit back if required in future
+      this.rmqService.emit('notification_created', {
+        notificationId: newNotification.id,
+      });
     } catch (error) {
       this.logger.error(`Error handling user_created event: ${error.message}`);
     }
