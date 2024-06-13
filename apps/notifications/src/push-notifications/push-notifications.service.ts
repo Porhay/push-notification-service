@@ -20,7 +20,7 @@ export class PushNotificationsService {
 
   async handleUserCreated(data: Record<string, string>): Promise<void> {
     try {
-      this.logger.log('Received user_created event:', data);
+      this.logger.log(`Received user_created event: ${JSON.stringify(data)}`);
 
       // Save a new notification to the database
       const now = new Date();
