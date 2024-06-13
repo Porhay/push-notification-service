@@ -3,7 +3,6 @@ version: '3.8'
 services:
   database:
     image: postgres:latest
-    container_name: database
     environment:
       POSTGRES_DB: root
       POSTGRES_USER: root
@@ -12,6 +11,12 @@ services:
       - "5432:5432"
     volumes:
       - ./data/postgresql/:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   accounts:
     container_name: accounts
@@ -22,6 +27,7 @@ services:
       - ./.env
     depends_on:
       - database
+      - rabbitmq
     ports:
       - '8000:8000'
 
@@ -34,5 +40,6 @@ services:
       - ./.env
     depends_on:
       - database
+      - rabbitmq
     ports:
       - '8001:8001'
