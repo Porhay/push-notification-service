@@ -18,7 +18,7 @@ export class UsersService {
   private readonly logger: Logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @Inject('RMQ_SERVICE') private readonly rmqService: ClientProxy,
+    @Inject('RMQ_SERVICE') private rmqService: ClientProxy,
   ) {}
 
   async create(user: CreateUserDto): Promise<User> {
