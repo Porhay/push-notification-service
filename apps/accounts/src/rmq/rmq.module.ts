@@ -1,27 +1,36 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, RmqOptions, Transport } from '@nestjs/microservices';
+import { DynamicModule, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RmqService } from './rmq.service';
+
+interface RmqModuleOptions {
+  name: string;
+}
 
 @Module({
-  imports: [
-    ClientsModule.registerAsync([
-      {
-        name: 'RMQ_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService): RmqOptions => ({
-          transport: Transport.RMQ,
-          options: {
-            urls: [configService.get<string>('RABBITMQ_URI')],
-            queue: 'notifications_queue',
-            queueOptions: {
-              durable: false,
-            },
-          },
-        }),
-        inject: [ConfigService],
-      },
-    ]),
-  ],
-  exports: [ClientsModule],
+  providers: [RmqService],
+  exports: [RmqService],
 })
-export class RmqModule {}
+export class RmqModule {
+  static register({ name }: RmqModuleOptions): DynamicModule {
+    return {
+      module: RmqModule,
+      imports: [
+        ClientsModule.registerAsync([
+          {
+            name,
+            useFactory: (configService: ConfigService) => ({
+              transport: Transport.RMQ,
+              options: {
+                urls: [configService.get<string>('RABBITMQ_URI')],
+                queue: configService.get<string>(`RABBITMQ_${name}_QUEUE`),
+              },
+            }),
+            inject: [ConfigService],
+          },
+        ]),
+      ],
+      exports: [ClientsModule],
+    };
+  }
+}

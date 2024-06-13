@@ -6,7 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RmqModule } from '../rmq/rmq.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PushNotification]), RmqModule],
+  imports: [
+    TypeOrmModule.forFeature([PushNotification]),
+    RmqModule.register({
+      name: 'ACCOUNTS',
+    }),
+  ],
   controllers: [PushNotificationsController],
   providers: [PushNotificationsService],
 })

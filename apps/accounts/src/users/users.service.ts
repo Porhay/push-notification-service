@@ -18,7 +18,7 @@ export class UsersService {
   private readonly logger: Logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @Inject('RMQ_SERVICE') private rmqService: ClientProxy,
+    @Inject('NOTIFICATIONS') private notificationsClient: ClientProxy,
   ) {}
 
   async create(user: CreateUserDto): Promise<User> {
@@ -40,7 +40,7 @@ export class UsersService {
     this.logger.log(`New user created, id: ${savedUser.id}`);
 
     // await schedulePushNotification(res.userId)
-    this.rmqService.emit('user_created', {
+    this.notificationsClient.emit('user_created', {
       userId: savedUser.id,
       name: savedUser.name,
     });

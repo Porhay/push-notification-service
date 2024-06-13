@@ -11,7 +11,9 @@ import { RmqModule } from './rmq/rmq.module';
     UsersModule,
     DatabaseModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    RmqModule,
+    RmqModule.register({
+      name: 'NOTIFICATIONS',
+    }),
   ],
   controllers: [],
   providers: [],

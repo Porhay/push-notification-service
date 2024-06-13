@@ -15,7 +15,7 @@ export class PushNotificationsService {
     @InjectRepository(PushNotification)
     private notificationsRepository: Repository<PushNotification>,
     private readonly configService: ConfigService,
-    @Inject('RMQ_SERVICE') private readonly rmqService: ClientProxy,
+    @Inject('ACCOUNTS') private readonly accountsService: ClientProxy,
   ) {}
 
   @EventPattern('user_created')
@@ -37,7 +37,7 @@ export class PushNotificationsService {
       this.logger.log(`Saved new notification, id: ${newNotification.id}`);
 
       // emit back if required in future
-      this.rmqService.emit('notification_created', {
+      this.accountsService.emit('notification_created', {
         notificationId: newNotification.id,
       });
     } catch (error) {

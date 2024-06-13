@@ -3,9 +3,14 @@ import { AccountsModule } from './accounts.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { RmqService } from './rmq/rmq.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AccountsModule);
+  const rmqService = app.get<RmqService>(RmqService);
+  app.connectMicroservice(rmqService.getOptions('ACCOUNTS'));
+  await app.startAllMicroservices();
+
   const config = app.get(ConfigService);
   const logger = new Logger('main');
 

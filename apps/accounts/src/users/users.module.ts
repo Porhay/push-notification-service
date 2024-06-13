@@ -6,7 +6,12 @@ import { User } from './entities/user.entity';
 import { RmqModule } from '../rmq/rmq.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), RmqModule],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    RmqModule.register({
+      name: 'NOTIFICATIONS',
+    }),
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],
