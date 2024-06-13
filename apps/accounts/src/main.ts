@@ -16,10 +16,7 @@ async function bootstrap() {
   const port = config.get('ACCOUNTS_PORT');
 
   const options = new DocumentBuilder()
-    .setTitle('Products API')
-    .setDescription(
-      'This is simple RESTful products API protected with JWT token authentication',
-    )
+    .setTitle('Push notifications service')
     .addServer(`http://localhost:${port}/`, 'Local environment')
     .setVersion('1.0')
     .build();
