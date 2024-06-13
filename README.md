@@ -24,15 +24,10 @@
 Task requirements can be found [here](REQUIREMENTS)
 
 
-## Check it out: https://push-notifications-service.onrender.com
-###### ▶ (note that app use free instance that spins down with inactivity that can delay first request by 50+ seconds)
-
-
 ## Docs (Swagger)
 ###### Could be found by next URL:
 ```sh
-$ http://localhost:8001/ # Local environment
-$ https://push-notifications-service.onrender.com # Production
+$ http://localhost:8000/ # accounts service
 ```
 
 
@@ -62,9 +57,17 @@ $ https://push-notifications-service.onrender.com # Production
 
 ###### 1. Make sure you have Node.js, Docker Desktop and Git installed!
 ###### 2. Start Docker Desktop
-###### 1. Run commands from the root directory:
+###### 3. Configure .env file
+###### 4. Run commands from the root directory:
 ```sh
 $ docker-compose up -d;
+```
+or manually:
+```sh
+$ docker-compose up -d rabbitmq
+$ docker-compose up -d database
+$ npm run start:dev notifications
+$ npm run start:dev accounts
 ```
 
 </details>
