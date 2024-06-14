@@ -1,10 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AccountsController } from './accounts.controller';
-import { AccountsService } from './accounts.service';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { RmqModule } from './rmq/rmq.module';
 
 @Module({
-  imports: [],
-  controllers: [AccountsController],
-  providers: [AccountsService],
+  imports: [
+    AuthModule,
+    UsersModule,
+    DatabaseModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    RmqModule.register({
+      name: 'NOTIFICATIONS',
+    }),
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AccountsModule {}
