@@ -11,9 +11,8 @@ import { RmqModule } from './rmq/rmq.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PushNotificationsModule,
     ScheduleModule.forRoot(),
-    RmqModule.register({
-      name: 'ACCOUNTS',
-    }),
+    RmqModule.register({ name: 'ACCOUNTS' }),
+    RmqModule.register({ name: 'PUSH_NOTIFICATIONS' }),
   ],
   controllers: [],
   providers: [],

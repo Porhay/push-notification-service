@@ -16,6 +16,8 @@ export class PushNotificationsService {
     private notificationsRepository: Repository<PushNotification>,
     private readonly configService: ConfigService,
     @Inject('ACCOUNTS') private readonly accountsService: ClientProxy,
+    @Inject('PUSH_NOTIFICATIONS')
+    private readonly pushNotificationsClient: ClientProxy,
   ) {}
 
   async handleUserCreated(data: Record<string, string>): Promise<void> {
@@ -44,10 +46,10 @@ export class PushNotificationsService {
     }
   }
 
-  // TODO: proccess notifications by parts
   @Cron(CronExpression.EVERY_HOUR)
   async processNotifications(): Promise<void> {
     try {
+      // TODO: proccess notifications by parts
       const notifications = await this.notificationsRepository.find({
         where: {
           sent: false,
@@ -56,7 +58,7 @@ export class PushNotificationsService {
       });
 
       for (const notification of notifications) {
-        await this.sendNotification(notification);
+        await this.sendToQueue(notification);
         notification.sent = true;
         await this.notificationsRepository.save(notification);
         this.logger.log(`Processed notification, id: ${notification.id}`);
@@ -67,9 +69,24 @@ export class PushNotificationsService {
     }
   }
 
-  private async sendNotification(
-    notification: PushNotification,
-  ): Promise<void> {
+  private async sendToQueue(notification: PushNotification) {
+    try {
+      const message = {
+        userId: notification.userId,
+        message: `Hi, ${notification.username}! Thanks for registration.`,
+      };
+
+      // Add message to queue
+      this.pushNotificationsClient.emit('add_notification', message);
+      this.logger.log(`Notification added to queue, id: ${notification.id}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to add notification to queue: ${error.message}`,
+      );
+    }
+  }
+
+  async handleNotification(notification: PushNotification): Promise<void> {
     try {
       const webhookUrl = this.configService.get<string>('WEBHOOK_URL');
       const response = await axios.post(webhookUrl, {

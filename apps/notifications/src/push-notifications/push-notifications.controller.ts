@@ -14,4 +14,9 @@ export class PushNotificationsController {
     this.pushNotificationsService.handleUserCreated(data);
     this.rmqService.ack(context);
   }
+
+  @EventPattern('add_notification')
+  async handlePushNotification(@Payload() data: any) {
+    await this.pushNotificationsService.handleNotification(data);
+  }
 }
