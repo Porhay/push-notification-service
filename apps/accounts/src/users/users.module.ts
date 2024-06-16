@@ -3,15 +3,9 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { RmqModule } from '../rmq/rmq.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User]),
-    RmqModule.register({
-      name: 'NOTIFICATIONS',
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

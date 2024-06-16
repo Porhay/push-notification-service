@@ -9,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(NotificationsModule);
   const rmqService = app.get<RmqService>(RmqService);
   app.connectMicroservice(rmqService.getOptions('NOTIFICATIONS'));
+  app.connectMicroservice(rmqService.getOptions('PUSH_NOTIFICATIONS'));
   await app.startAllMicroservices();
 
   const config = app.get(ConfigService);
